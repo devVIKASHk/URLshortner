@@ -1,0 +1,12 @@
+{
+  "name": "azzurlshortner6",
+  "version": "1.0.0",
+  "description": "urlShortner using Node js only ",
+  "license": "ISC",
+  "author": "Vikash",
+  "type": "module",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}

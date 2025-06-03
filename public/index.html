@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./style.css">
+    <title>Document</title>
+</head>
+<body>
+    <div class="container">
+        <div class="inner-container">
+            <h1 class="heading">URL Shortener</h1>
+            <form id="form">
+
+                <div class="form-container">
+
+                    <div class="form-div">
+                        <label for="url">Enter URL:</label><br>
+                        <input type="url" name="url" id="url" required>
+                    </div>
+                    <div class="form-div">
+                        <label for="url-short">Custom Short URL:</label><br>
+                        <input type="text" name="url-short" id="url-short"  required>
+                    </div>
+
+                    <button type="submit">Shorten</button>
+
+                </div>
+
+            </form>
+            <h2>Shorten Urls:</h2>
+            <ul class="shorten-list"></ul>
+        </div>
+    </div>
+
+    <script>
+
+        
+        
+
+        const urlDataFetching=async ()=>{
+            try{
+                const res=await fetch('/urls');
+                if (!res.ok){
+                    throw new Error ('Server Error')
+                }
+
+                const data=await res.json();
+
+                const list =document.querySelector('.shorten-list');
+                list.innerHTML='';
+                for (let [shortCode,url] of Object.entries(data)){
+                    const li=document.createElement('li');
+                    li.innerHTML= `<p style="text-align:center"><a href='/${shortCode}' target='_blank'>${window.location.origin}/${shortCode}</p><p style="text-align:center; white-space:no-wrap;overflow:auto;margin-top:3px;scrollbar-width:none">${url}</p>
+                    </a>`
+                    li.classList.add('list')
+                    list.appendChild(li)
+                    console.log(li.innerHTML)
+                
+                }
+                
+
+            }
+            catch(error){
+                console.error('Failed to Fetch url: ',error)
+            }
+        }
+
+        
+        
+        document.querySelector('#form').addEventListener('submit', (event) => {
+                event.preventDefault(); 
+                // console.log('djfhdhfui')
+                // console.log(event.target);
+
+                const formData = new FormData(event.target);
+
+                const formDta={
+                    shortCode:formData.get('url-short'),
+                    url:formData.get('url')
+                }
+
+                fetch('/submit',{
+                    method:'POST',
+                    headers:{'Content-Type':'application/json'},
+                    body:JSON.stringify(formDta)
+                }).then(
+                    (res)=>{
+                        // const resType=res.headers.get('content-type');
+
+                        // if(res.ok){
+                           
+                        // }
+                        return res.json()
+                        
+                    }
+                ).then(
+                    (data)=>{
+                        urlDataFetching()
+                        alert(data.message)
+                        event.target.reset()
+                    }
+                ).catch(
+                    (error)=>{
+                        console.error(error);
+                    }
+                )
+
+            })
+
+            urlDataFetching()
+
+
+    </script>
+</body>
+</html>
